@@ -90,3 +90,7 @@ ENV/
 
 # Dataset folder
 src/
+
+# Except images and plots
+!src/Images
+!src/Plots
