@@ -89,8 +89,5 @@ ENV/
 .ropeproject
 
 # Dataset folder
-src/
-
-# Except images and plots
-!src/Images
-!src/Plots
+src/Frame
+src/Logs
