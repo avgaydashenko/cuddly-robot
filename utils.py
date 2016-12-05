@@ -260,4 +260,4 @@ def read_data():
     train_results = train_data[5:10]
     train_data = train_data[:5]
     
-    return (train_data, test_data)
+    return (train_data, train_results, test_data, test_results)
