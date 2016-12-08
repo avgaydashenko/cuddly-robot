@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
+from PIL import Image, ImageDraw
 from time import localtime, strftime
-
 
 # Frame size
 FRAME_WIDTH = 1920
@@ -98,7 +99,7 @@ def to_model_with_features(df):
     last_speed = speed[-1:]
     mean_speed = np.mean(speed, axis=0)
     cort_coord = movement_vector / double_speed
-    angle = np.arctan2(cort_coord[:,::2], cort_coord[:,1::2]) / np.pi * 4
+    angle = np.arctan2(cort_coord[:,::2], cort_coord[:,1::2]) / np.pi * 20
     
     return (np.concatenate((to_model(df), to_model(movement_vector), speed.T, acceleration.T, last_speed.T,
                             np.array([mean_speed]).T, angle.T), axis=1)).astype(int)
@@ -127,6 +128,9 @@ def unmake_delta(data, delta):
             result[i] += result[i-1]
             
     return result
+
+
+
 
 
 # first simply algorithm to get some start
