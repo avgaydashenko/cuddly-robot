@@ -176,7 +176,7 @@ def compare_results(function, test_results, parameter_name, list_of_values, **ot
     width = 2 / number
     result_bar = plt.bar(range(number), result, width, color='g')
 
-    plt.ylabel('Average difference')
+    plt.ylabel('Score')
     plt.xlabel(parameter_name)
     plt.title("Difference between real points and predicted by {parameter_name} in {function_name}".format(
         function_name=function.__name__, parameter_name=parameter_name))
@@ -250,7 +250,52 @@ def get_most_unpredictable_pedestrians(file, pedestrian_number):
         draw_lines(frame_number=first_frame, paths=[prev_path, orig_path, pred_path], colors=['blue', 'green', 'red'],
            image_name="{ind}_ped{num}_frame{frame}".format(ind=i+1, num=pedestrian, frame=first_frame), draw_line=False)
         
+def get_pedestrians_compared_baseline(file, pedestrian_number, maximize_score):
+    original = np.array(test_results)
+    predicted = np.load(file)
+    base = baseline(test_data, start_point_index=2)
+    
+    delta1 = ((original - predicted) ** 2).sum(axis=0)
+    delta1[::2] += delta1[1::2]
+    delta1[1::2] = delta1[::2]
+    delta2 = ((original - base) ** 2).sum(axis=0)
+    delta2[::2] += delta2[1::2]
+    delta2[1::2] = delta2[::2]
+    dist = delta2 - delta1
+    
+    if not maximize_score:
+        dist = -dist
         
+    shuffled_indices = dist.argsort()
+    indices = shuffled_indices.copy()
+    indices[::2] = np.minimum(shuffled_indices[::2], shuffled_indices[1::2])
+    indices[1::2] = np.maximum(shuffled_indices[::2], shuffled_indices[1::2])
+    
+    for i in range(pedestrian_number):
+        if i == 0:
+            orig_path = original[:, indices[-2:]]
+            base_path = base[:, indices[-2:]]
+            pred_path = predicted[:, indices[-2:]]
+        else:
+            orig_path = original[:, indices[-2*(i+1):-2*i]]
+            base_path = base[:, indices[-2*(i+1):-2*i]]
+            pred_path = predicted[:, indices[-2*(i+1):-2*i]]
+        
+        #print(orig_path)
+        
+        pedestrian, first_frame = find_by_path(orig_path)
+        
+        df = download_pedestrian(pedestrian)
+        prev_path = np.array(df.loc[range(first_frame - 5 * 20, first_frame, 20)])
+        
+        image_name = "{ind}_ped{num}_frame{frame}".format(ind=i+1,num=pedestrian, frame=first_frame)
+        if maximize_score:
+            image_name += "_good"
+        else:
+            image_name += "_bad"
+        
+        draw_lines(frame_number=first_frame, paths=[prev_path, orig_path, base_path, pred_path],
+                   colors=['blue', 'green', 'yellow', 'red'], image_name=image_name, draw_line=False)        
         
 # Read data
 def read_data():
