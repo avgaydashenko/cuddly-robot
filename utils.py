@@ -101,6 +101,13 @@ def to_model_with_features(df):
     cort_coord = movement_vector / double_speed
     angle = np.arctan2(cort_coord[:,::2], cort_coord[:,1::2]) / np.pi * 20
     
+    # features 0-9: coordinates
+    # features 10-17: coordinates delta
+    # features 18-21: speed
+    # features 22-24: acceleration
+    # feature  25: last speed
+    # feature  26: mean speed
+    # feature  27-30: angles
     return (np.concatenate((to_model(df), to_model(movement_vector), speed.T, acceleration.T, last_speed.T,
                             np.array([mean_speed]).T, angle.T), axis=1)).astype(int)
 
