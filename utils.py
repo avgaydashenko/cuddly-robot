@@ -231,7 +231,7 @@ def find_by_path(path, search_in_test=True):
     return (-1, -1)
 
 
-def get_most_unpredictable_pedestrians(file, pedestrian_number):
+def get_most_unpredictable_pedestrians(file, test_results, pedestrian_number):
     predicted = np.load(file)
     original = np.array(test_results)
     dist = distance_for_each_point(predicted, original)
