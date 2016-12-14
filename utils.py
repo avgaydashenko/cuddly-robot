@@ -191,6 +191,8 @@ def compare_results(function, test_results, parameter_name, list_of_values, **ot
     plt.savefig("src/Plots/{date}_{function_name}_score_by_{parameter_name}_with_features.png".format(
         date=strftime("%Y%m%d", localtime()), function_name=function.__name__, parameter_name=parameter_name))    
     
+    return result
+    
     
 def draw_lines(frame_number, paths, colors, image_name, draw_line=True):
     im = Image.open(get_framename(frame_number))
